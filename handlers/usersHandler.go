@@ -33,11 +33,15 @@ func bodyToUser(_r *http.Request, _usr *users.User) error {
 	return json.Unmarshal(bdy, _usr)
 }
 
-/////////////////////////////////////////////////////////////////
+////////////////////// usersGetAll ///////////////////////////////////////////
 func usersGetAll(_w http.ResponseWriter, _r *http.Request) {
 	users, err := users.All()
 	if err != nil {
 		postError(_w, http.StatusInternalServerError)
+		return
+	}
+	if _r.Method == http.MethodHead {
+		postBodyResponse(_w, http.StatusOK, jsonResponse{})
 		return
 	}
 	postBodyResponse(_w, http.StatusOK, jsonResponse{"users": users})
@@ -67,7 +71,7 @@ func usersPostOne(_w http.ResponseWriter, _r *http.Request) {
 }
 
 ///////////////////////////////////////////////////////////////
-func usersGetOne(_w http.ResponseWriter, _ *http.Request, _id bson.ObjectId) {
+func usersGetOne(_w http.ResponseWriter, _r *http.Request, _id bson.ObjectId) {
 	usr, err := users.One(_id)
 	if err != nil {
 		if err == storm.ErrNotFound {
@@ -75,6 +79,10 @@ func usersGetOne(_w http.ResponseWriter, _ *http.Request, _id bson.ObjectId) {
 			return
 		}
 		postError(_w, http.StatusInternalServerError)
+		return
+	}
+	if _r.Method == http.MethodHead {
+		postBodyResponse(_w, http.StatusOK, jsonResponse{})
 		return
 	}
 	postBodyResponse(_w, http.StatusOK, jsonResponse{"users": usr})
