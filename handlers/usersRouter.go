@@ -43,6 +43,7 @@ func UsersRouter(_writer http.ResponseWriter, _req *http.Request) {
 		usersPathOne(_writer, _req, id)
 		return
 	case http.MethodDelete:
+		usersDeleteOne(_writer, _req, id)
 		return
 	default:
 		postError(_writer, http.StatusMethodNotAllowed)

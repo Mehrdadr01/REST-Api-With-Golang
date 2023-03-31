@@ -131,3 +131,17 @@ func usersPathOne(_w http.ResponseWriter, _r *http.Request, _id bson.ObjectId) {
 	}
 	postBodyResponse(_w, http.StatusOK, jsonResponse{"users": usr})
 }
+
+///////////////////////////////////////////////////////////////////
+func usersDeleteOne(_w http.ResponseWriter, _ *http.Request, _id bson.ObjectId) {
+	err := users.Delete(_id)
+	if err != nil {
+		if err == storm.ErrNotFound {
+			postError(_w, http.StatusNotFound)
+			return
+		}
+		postError(_w, http.StatusInternalServerError)
+		return
+	}
+	_w.WriteHeader(http.StatusOK)
+}
