@@ -37,8 +37,10 @@ func UsersRouter(_writer http.ResponseWriter, _req *http.Request) {
 		usersGetOne(_writer, _req, id)
 		return
 	case http.MethodPut:
+		usersPutOne(_writer, _req, id)
 		return
 	case http.MethodPatch:
+		usersPathOne(_writer, _req, id)
 		return
 	case http.MethodDelete:
 		return

@@ -77,5 +77,57 @@ func usersGetOne(_w http.ResponseWriter, _ *http.Request, _id bson.ObjectId) {
 		postError(_w, http.StatusInternalServerError)
 		return
 	}
-	postBodyResponse(_w, http.StatusOK, jsonResponse{"user": usr})
+	postBodyResponse(_w, http.StatusOK, jsonResponse{"users": usr})
+}
+
+///////////////////////////////////////////////////////////////
+func usersPutOne(_w http.ResponseWriter, _r *http.Request, _id bson.ObjectId) {
+	usr := new(users.User)
+	err := bodyToUser(_r, usr)
+	if err != nil {
+		postError(_w, http.StatusBadRequest)
+		return
+	}
+	usr.ID = _id
+	err = usr.Save()
+	// we get 2 errors : 1.for database and 2.failed validation
+	if err != nil {
+		if err == users.ErrRecordInvalid {
+			postError(_w, http.StatusBadRequest)
+		} else {
+			postError(_w, http.StatusInternalServerError)
+		}
+		return
+	}
+	postBodyResponse(_w, http.StatusOK, jsonResponse{"users": usr})
+}
+
+///////////////////////////////////////////////////////////////////
+func usersPathOne(_w http.ResponseWriter, _r *http.Request, _id bson.ObjectId) {
+	usr, err := users.One(_id)
+	if err != nil {
+		if err == storm.ErrNotFound {
+			postError(_w, http.StatusNotFound)
+			return
+		}
+		postError(_w, http.StatusInternalServerError)
+		return
+	}
+	err = bodyToUser(_r, usr)
+	if err != nil {
+		postError(_w, http.StatusBadRequest)
+		return
+	}
+	usr.ID = _id
+	err = usr.Save()
+	// we get 2 errors : 1.for database and 2.failed validation
+	if err != nil {
+		if err == users.ErrRecordInvalid {
+			postError(_w, http.StatusBadRequest)
+		} else {
+			postError(_w, http.StatusInternalServerError)
+		}
+		return
+	}
+	postBodyResponse(_w, http.StatusOK, jsonResponse{"users": usr})
 }
