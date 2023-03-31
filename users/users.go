@@ -39,7 +39,7 @@ func All() ([]User, error) {
 	return users, nil
 }
 
-// OneUser returns a single user from the database
+// One returns a single user from the database
 func One(id bson.ObjectId) (*User, error) {
 	db, err := storm.Open(dbPATH)
 	if err != nil {

@@ -8,6 +8,7 @@ import (
 
 	"encoding/json"
 
+	"github.com/asdine/storm/v3"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -63,4 +64,18 @@ func usersPostOne(_w http.ResponseWriter, _r *http.Request) {
 	}
 	_w.Header().Set("Location", "/users/"+usr.ID.Hex())
 	_w.WriteHeader(http.StatusCreated)
+}
+
+///////////////////////////////////////////////////////////////
+func usersGetOne(_w http.ResponseWriter, _ *http.Request, _id bson.ObjectId) {
+	usr, err := users.One(_id)
+	if err != nil {
+		if err == storm.ErrNotFound {
+			postError(_w, http.StatusNotFound)
+			return
+		}
+		postError(_w, http.StatusInternalServerError)
+		return
+	}
+	postBodyResponse(_w, http.StatusOK, jsonResponse{"user": usr})
 }

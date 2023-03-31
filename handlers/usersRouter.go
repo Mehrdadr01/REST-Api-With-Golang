@@ -30,10 +30,11 @@ func UsersRouter(_writer http.ResponseWriter, _req *http.Request) {
 		return
 	}
 
-	// id := bson.ObjectIdHex(path)
+	id := bson.ObjectIdHex(path)
 
 	switch _req.Method {
 	case http.MethodGet:
+		usersGetOne(_writer, _req, id)
 		return
 	case http.MethodPut:
 		return
